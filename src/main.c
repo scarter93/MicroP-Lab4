@@ -8,6 +8,12 @@
 #include "stm32f4xx_conf.h"
 #include <stdio.h>
 
+#include "temperature.h"
+
+// ID for thread
+osThreadId	Blinky_thread;
+osThreadId temperature_thread;
+
 void Blinky_GPIO_Init(void){
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
@@ -25,29 +31,39 @@ void Blinky_GPIO_Init(void){
 void Blinky(void const *argument){
 	while(1){
 		GPIO_ToggleBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);
-		printf("hello world\n");
+		osDelay(250);
+	}
+}
+
+void Temperature(void const *argument) {
+	float temp;
+	while(1) {
+		temp = get_temperature();
+		printf("temp: %f\n", temp);
 		osDelay(250);
 	}
 }
 
 osThreadDef(Blinky, osPriorityNormal, 1, 0);
+osThreadDef(Temperature, osPriorityNormal, 1, 0);
 
 /*
  * main: initialize and start the system
  */
 int main (void) {
   osKernelInitialize ();                    // initialize CMSIS-RTOS
-	
-	// ID for thread
-	osThreadId	Blinky_thread;
+
+
 	
   // initialize peripherals here
 	Blinky_GPIO_Init();
+	temperature_setup();
 	
   // create 'thread' functions that start executing,
   // example: tid_name = osThreadCreate (osThread(name), NULL);
 	Blinky_thread = osThreadCreate(osThread(Blinky), NULL);
-	
+	temperature_thread = osThreadCreate(osThread(Temperature), NULL);
+
 	osKernelStart ();                         // start thread execution 
 }
 
