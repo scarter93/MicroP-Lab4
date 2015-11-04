@@ -2,9 +2,11 @@
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
 #include "lis3dsh.h"
+#include "osObjects.h" 
 #include <stdio.h>
 #include <math.h>
 #include "moving_average.h"
+
 
 FilterBuffer angle_avg;
 
@@ -75,29 +77,29 @@ int accelerometer_setup(ACCELEROMETER which) {
 	return 0;
 }
 
+float xyz[3];
+
 #define OFFSET_X 0
 #define OFFSET_Y -13.5f
 #define OFFSET_Z -26.0f
 void EXTI0_IRQHandler(void)
 {
-	float xyz[3];
 	if (EXTI_GetITStatus(LIS3DSH_SPI_INT1_EXTI_LINE) != RESET){
 		LIS3DSH_ReadACC(xyz);
-		
-		// get offset values
-		float x = xyz[0] + OFFSET_X;
-		float y = xyz[1] + OFFSET_Y;
-		float z = xyz[2] + OFFSET_Z;
-		
-		float pitch = atan2f(x, sqrtf(y*y + z*z)) * 180.0f / 3.14f + 89;
-		//float roll = atan2f(y, sqrtf(x*x + z*z)) * 180.0f / 3.14f;
-		add_value(&angle_avg, pitch);
-
+		osSignalSet(accelerometer_thread, SIGNAL_ACCELEROMETER);
 		//printf("%f\n", get_value(&angle_avg));
 		EXTI_ClearITPendingBit(LIS3DSH_SPI_INT1_EXTI_LINE);
 	}
 }
 
+void update() {
+	// get offset values
+	float x = xyz[0] + OFFSET_X;
+	float y = xyz[1] + OFFSET_Y;
+	float z = xyz[2] + OFFSET_Z;
+	float pitch = atan2f(x, sqrtf(y*y + z*z)) * 180.0f / 3.14f + 89;
+	add_value(&angle_avg, pitch);
+}
 
 /*!
 	Gets the actual angle

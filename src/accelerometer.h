@@ -26,4 +26,7 @@ int accelerometer_setup(ACCELEROMETER which);
 	@return 0 on success, else negative
  */
 int get_angle(float* angle);
+
+void update(void);
+
 #endif // __INCLUDE_ACELEROMTER_H__

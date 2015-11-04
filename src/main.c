@@ -7,12 +7,12 @@
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
 #include <stdio.h>
+
 #include "accelerometer.h"
-
 #include "temperature.h"
+#include "seven_segment_display.h"
 
-// ID for thread
-osThreadId	Blinky_thread;
+osThreadId Blinky_thread;
 osThreadId temperature_thread;
 osThreadId accelerometer_thread;
 
@@ -46,11 +46,14 @@ void Temperature(void const *argument) {
 	}
 }
 void Accelerometer(void const *argument){
-	float a;
 	//osDelay(3000);
+	float angle;
 	while (1){
-		get_angle(&a);
-		printf("angle: %f\n", a);
+		// get offset values
+		osSignalWait(SIGNAL_ACCELEROMETER, osWaitForever);
+		update();
+		get_angle(&angle);
+		printf("angle: %f\n", angle);
 		osDelay(250);
 	}
 }
@@ -70,12 +73,14 @@ osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
 	accelerometer_setup(ACCELEROMETER_LIS3DSH);
 	Blinky_GPIO_Init();
 	temperature_setup();
-	
+	seven_segment_setup();
+	 
   // create 'thread' functions that start executing,
   // example: tid_name = osThreadCreate (osThread(name), NULL);
 	Blinky_thread = osThreadCreate(osThread(Blinky), NULL);
 	temperature_thread = osThreadCreate(osThread(Temperature), NULL);
 	accelerometer_thread = osThreadCreate(osThread(Accelerometer), NULL);
+	 
 	osKernelStart ();                         // start thread execution 
 }
 
