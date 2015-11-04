@@ -7,6 +7,7 @@
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
 #include <stdio.h>
+#include "accelerometer.h"
 
 void Blinky_GPIO_Init(void){
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -25,29 +26,39 @@ void Blinky_GPIO_Init(void){
 void Blinky(void const *argument){
 	while(1){
 		GPIO_ToggleBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);
-		printf("hello world\n");
+		//printf("hello world\n");
+		osDelay(250);
+	}
+}
+void Accelerometer(void const *argument){
+	float a;
+	//osDelay(3000);
+	while (1){
+		get_angle(&a);
+		//printf("angle: %f\n", a);
 		osDelay(250);
 	}
 }
 
 osThreadDef(Blinky, osPriorityNormal, 1, 0);
-
+osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
 /*
  * main: initialize and start the system
  */
-int main (void) {
+ int main (void) {
   osKernelInitialize ();                    // initialize CMSIS-RTOS
 	
 	// ID for thread
 	osThreadId	Blinky_thread;
-	
+	osThreadId	Accer_thread;
   // initialize peripherals here
+	accelerometer_setup(ACCELEROMETER_LIS3DSH);
 	Blinky_GPIO_Init();
 	
   // create 'thread' functions that start executing,
   // example: tid_name = osThreadCreate (osThread(name), NULL);
 	Blinky_thread = osThreadCreate(osThread(Blinky), NULL);
-	
+	Accer_thread = osThreadCreate(osThread(Accelerometer), NULL);
 	osKernelStart ();                         // start thread execution 
 }
 
