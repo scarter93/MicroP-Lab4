@@ -63,7 +63,9 @@ int accelerometer_setup(ACCELEROMETER which) {
 		
 		// setup NVIC for accelerometer
 		nvic_init_s.NVIC_IRQChannel = LIS3DSH_SPI_INT1_EXTI_IRQn; //
+
     nvic_init_s.NVIC_IRQChannelPreemptionPriority = 0x02;
+
 		nvic_init_s.NVIC_IRQChannelSubPriority = 0x00;
 		nvic_init_s.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&nvic_init_s);
