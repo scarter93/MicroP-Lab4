@@ -12,6 +12,8 @@
 #include "temperature.h"
 #include "seven_segment_display.h"
 
+#define OVERHEATING 35
+
 osThreadId Blinky_thread;
 osThreadId temperature_thread;
 osThreadId accelerometer_thread;
@@ -43,7 +45,11 @@ void Temperature(void const *argument) {
 	while(1) {
 		temp = get_temperature();
 		printf("temp: %f\n", temp);
-		//display(temp);
+		if (temp > OVERHEATING)
+			flash_display(1);
+		//if (display == TEMP) {
+		//	display(temp);
+		//}
 		osDelay(250);
 	}
 }
@@ -57,7 +63,9 @@ void Accelerometer(void const *argument){
 		update();
 		get_angle(&angle);
 		printf("angle: %f\n", angle);
-		display(angle);
+		//if (display == ACC) {
+		//	display(angle);
+		//}
 		osDelay(250);
 	}
 }

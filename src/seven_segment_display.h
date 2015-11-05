@@ -21,16 +21,15 @@ int seven_segment_setup(void);
 int display(float to_display);
 
 /*!
-	display a guess on the seven segment display. 
-	This only displays as many digits as are input
-
-	@param guess integer to display on seven segment display
-	@return 0 on success, else -1
+	flash the seven segment display
+	@param 1 starts flashing the display and 0
+					 stops flashin
  */
+void flash_display(int toggle);
 
-int display_guess(int guess);
-
+/*!
+	Thread which updates the Seven Segment Dispaly
+ */
 void Display(void const *argument);
 
-extern unsigned int wait;
 #endif // __INCLUDE_SEVEN_SEGMENT_H__

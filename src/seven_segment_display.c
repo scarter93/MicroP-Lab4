@@ -7,7 +7,10 @@
 
 #define IO_SEVEN_SEGMENT GPIOB
 
-unsigned int wait = 0;
+#define FLASH_RATE 200
+
+int flash = 0;	//! whether or not to flash display
+unsigned int count = 0; //! alternate between digits
 
 /*!
 	Which pin (on IO_SEVEN_SEGMENT) is used for each digit.
@@ -133,7 +136,6 @@ int seven_segment_setup() {
 	return 0;
 }
 
-unsigned int count = 0; //! alternate between digits
 void TIM3_IRQHandler() {
 	TIM_ClearFlag(TIM3, TIM_IT_Update);
 	osSignalSet(display_thread, SIGNAL_DISPLAY);
@@ -184,47 +186,22 @@ int display(float to_display) {
 	return 0;
 }
 
-/*!
-	display a guess on the seven segment display. 
-	This only displays as many digits as are input
-
-	@param guess integer to display on seven segment display
-	@return 0 on success, else -1
- */
-
-int display_guess(int guess) {
-		// turn all segments off
-	num[0] = NUM_OFF;
-	num[1] = NUM_OFF;
-	num[2] = NUM_OFF;
-	
-	// error if too small or too large
-	if (guess < 0 || guess > 180) {
-		return -1;
-	}
-	// set LSB
-	for (int i = 2; i >=0; i--) {
-		num[i] |= toSegments[guess % 10];
-		guess = guess / 10;
-		if (guess == 0) {
-			return 0;
-		}
-	}
-	return -1;
+void flash_display(int toggle) {
+	flash = toggle;
 }
 
 void Display(void const *argument) {
 	while(1) {
 		osSignalWait(SIGNAL_DISPLAY, osWaitForever);
 		int index_tmp = count++ % 3;
-		// Select a Digit
 		GPIO_SetBits(IO_SEVEN_SEGMENT, ALL_DIGITS);
-		GPIO_ResetBits(IO_SEVEN_SEGMENT, INDEX[index_tmp]);
-		
-		// Display a Number
 		GPIO_ResetBits(IO_SEVEN_SEGMENT, ALL_SEGS | SEGMENT_DEC);
+		if (flash == 1 && (count % FLASH_RATE) < (FLASH_RATE/2)) {
+			continue;
+		}
+		// Select a Digit
+		GPIO_ResetBits(IO_SEVEN_SEGMENT, INDEX[index_tmp]);
+		// Display a Number
 		GPIO_SetBits(IO_SEVEN_SEGMENT, num[index_tmp]);
-
-		wait++;
 	}
 }
