@@ -14,7 +14,7 @@
 #include "temperature.h"
 #include "seven_segment_display.h"
 
-#define OVERHEATING 37f
+#define OVERHEATING 37.0f
 
 osThreadId temperature_thread;
 osThreadId accelerometer_thread;
