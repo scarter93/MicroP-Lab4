@@ -155,6 +155,7 @@ int keypad_setup() {
 	
 	return 0;
 }
+//Interrupt handler
 void EXTI9_5_IRQHandler(void){
 	
 	if(EXTI_GetITStatus(EXTI_Line9) != RESET) {
@@ -170,7 +171,7 @@ void EXTI9_5_IRQHandler(void){
 
 	osSignalSet(keypad_thread, SIGNAL_KEYPAD);
 }
-
+//get press data
 void get_press(void){
 	int col_select;
 	int row_select;
@@ -205,20 +206,21 @@ void get_press(void){
 		return;
 	
 	unsigned int selection = col_select + row_select;
-	
+	//if '1' set temp to display, if '2' set accelerometer to display
 	if (BUTTON_MAP[selection] == '1') {
 		to_display = TEMP;
 	}else if (BUTTON_MAP[selection] == '2') {
 		to_display = ACCEL;
 	}
-	
 	printf("button selected: %c\n", BUTTON_MAP[selection]);
 	printf("to_display = %d\n", to_display);
 	keypad_gpio_reset();
 }
 
+//thread function
 void Keypad(void const *argument){
 	while (1){
+		//wait until called
 		osSignalWait(SIGNAL_KEYPAD, osWaitForever);
 		get_press();
 		osDelay(150);

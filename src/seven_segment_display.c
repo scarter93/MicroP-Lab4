@@ -185,17 +185,19 @@ int display(float to_display) {
 	
 	return 0;
 }
-
+//toggle flashing state
 void flash_display(int toggle) {
 	flash = toggle;
 }
-
+//thread function
 void Display(void const *argument) {
 	while(1) {
+		//wait until called
 		osSignalWait(SIGNAL_DISPLAY, osWaitForever);
 		int index_tmp = count++ % 3;
 		GPIO_SetBits(IO_SEVEN_SEGMENT, ALL_DIGITS);
 		GPIO_ResetBits(IO_SEVEN_SEGMENT, ALL_SEGS | SEGMENT_DEC);
+		//flash if ready to flash
 		if (flash == 1 && (count % FLASH_RATE) < (FLASH_RATE/2)) {
 			continue;
 		}

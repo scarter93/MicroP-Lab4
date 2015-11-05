@@ -20,6 +20,9 @@ typedef enum {
  */
 int accelerometer_setup(ACCELEROMETER which);
 
+//function for thread
+void Accelerometer(void const *argument);
+
 /*!
 	Gets the actual angle
 	@param *angle the angle measured by the accelerometer
@@ -27,6 +30,5 @@ int accelerometer_setup(ACCELEROMETER which);
  */
 int get_angle(float* angle);
 
-void update(void);
 
 #endif // __INCLUDE_ACELEROMTER_H__

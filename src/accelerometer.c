@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "moving_average.h"
-
+#include "seven_segment_display.h"
 
 FilterBuffer angle_avg;
 
@@ -110,3 +110,21 @@ int get_angle(float* angle) {
 	*angle = get_value(&angle_avg);
 	return 0;
 }
+
+void Accelerometer(void const *argument){
+	//osDelay(3000);
+	float angle;
+	while (1){
+		//wait untill ready
+		osSignalWait(SIGNAL_ACCELEROMETER, osWaitForever);
+		update();
+		get_angle(&angle);
+		printf("angle: %f\n", angle);
+		//display if designated
+		if (to_display == ACCEL) {
+			display(angle);
+		}
+		osDelay(250);
+	}
+}
+

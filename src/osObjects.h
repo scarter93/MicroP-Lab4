@@ -18,6 +18,7 @@
 
 #include <cmsis_os.h>              // CMSIS RTOS header file
 
+//signal values for signaling
 typedef enum SIGNALS{
 	SIGNAL_KEYPAD = 0x0001,
 	SIGNAL_TEMP_ACCEL = 0x0002,
@@ -25,20 +26,16 @@ typedef enum SIGNALS{
 	SIGNAL_DISPLAY = 0x0004
 }SIGNALS;
 
+//enum for what to display
 typedef enum TO_DISPLAY{
 	TEMP,
 	ACCEL
 }TO_DISPLAY;
-
+//variable for enum
 extern TO_DISPLAY to_display;
 
 // global 'thread' functions ---------------------------------------------------
 /* 
-Example:
-extern void sample_name (void const *argument);          // thread function
-
-osThreadId tid_sample_name;                              // thread id
-osThreadDef (sample_name, osPriorityNormal, 1, 0);       // thread object
 */
 
 extern osThreadId temperature_thread;
@@ -46,41 +43,5 @@ extern osThreadId accelerometer_thread;
 extern osThreadId display_thread;
 extern osThreadId keypad_thread;
 
-// global 'semaphores' ----------------------------------------------------------
-/* 
-Example:
-osSemaphoreId sid_sample_name;                           // semaphore id
-osSemaphoreDef (sample_name);                            // semaphore object
-*/
-
-
-// global 'memory pools' --------------------------------------------------------
-/* 
-Example:
-typedef struct sample_name type_sample_name;             // object data type
-
-osPoolId mpid_sample_name;                               // memory pool id
-osPoolDef (sample_name, 16, type_sample_name);           // memory pool object
-*/
-
-
-// global 'message queues' -------------------------------------------------------
-/* 
-Example:
-typedef struct sample_name type_sample_name;             // object data type
-
-osMessageQId mid_sample_name;                            // message queue id
-osMessageQDef (sample_name, 16, type_sample_name);       // message queue object
-*/
-
-
-// global 'mail queues' ----------------------------------------------------------
-/* 
-Example:
-typedef struct sample_name type_sample_name;             // object data type
-
-osMailQId qid_sample_name;                               // mail queue id
-osMailQDef (sample_name, 16, type_sample_name);          // mail queue object
-*/
 
 #endif  // __osObjects
