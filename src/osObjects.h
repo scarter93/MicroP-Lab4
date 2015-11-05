@@ -18,10 +18,19 @@
 
 #include <cmsis_os.h>              // CMSIS RTOS header file
 
-enum Signal {
-	SIGNAL_ACCELEROMETER = 0x0002,
-	SIGNAL_DISPLAY = 0x0003
-};
+typedef enum SIGNALS{
+	SIGNAL_KEYPAD = 0x0001,
+	SIGNAL_TEMP_ACCEL = 0x0002,
+	SIGNAL_ACCELEROMETER = 0x0003,
+	SIGNAL_DISPLAY = 0x0004
+}SIGNALS;
+
+typedef enum TO_DISPLAY{
+	TEMP,
+	ACCEL
+}TO_DISPLAY;
+
+extern TO_DISPLAY to_display;
 
 // global 'thread' functions ---------------------------------------------------
 /* 
@@ -35,7 +44,7 @@ osThreadDef (sample_name, osPriorityNormal, 1, 0);       // thread object
 extern osThreadId temperature_thread;
 extern osThreadId accelerometer_thread;
 extern osThreadId display_thread;
-
+extern osThreadId keypad_thread;
 
 // global 'semaphores' ----------------------------------------------------------
 /* 
