@@ -15,6 +15,7 @@
 osThreadId Blinky_thread;
 osThreadId temperature_thread;
 osThreadId accelerometer_thread;
+osThreadId display_thread;
 
 void Blinky_GPIO_Init(void){
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -64,6 +65,7 @@ void Accelerometer(void const *argument){
 osThreadDef(Blinky, osPriorityNormal, 1, 0);
 osThreadDef(Temperature, osPriorityNormal, 1, 0);
 osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
+osThreadDef(Display, osPriorityNormal, 1, 0);
 
 /*
  * main: initialize and start the system
@@ -83,7 +85,7 @@ osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
 	Blinky_thread = osThreadCreate(osThread(Blinky), NULL);
 	temperature_thread = osThreadCreate(osThread(Temperature), NULL);
 	accelerometer_thread = osThreadCreate(osThread(Accelerometer), NULL);
-	 
+	display_thread = osThreadCreate(osThread(Display), NULL);
 	osKernelStart ();                         // start thread execution 
 }
 

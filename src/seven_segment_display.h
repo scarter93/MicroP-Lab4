@@ -30,5 +30,7 @@ int display(float to_display);
 
 int display_guess(int guess);
 
+void Display(void const *argument);
+
 extern unsigned int wait;
 #endif // __INCLUDE_SEVEN_SEGMENT_H__

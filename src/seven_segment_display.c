@@ -2,7 +2,9 @@
 
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
-		
+
+#include "osObjects.h"
+
 #define IO_SEVEN_SEGMENT GPIOB
 
 unsigned int wait = 0;
@@ -134,17 +136,7 @@ int seven_segment_setup() {
 unsigned int count = 0; //! alternate between digits
 void TIM3_IRQHandler() {
 	TIM_ClearFlag(TIM3, TIM_IT_Update);
-	
-	int index_tmp = count++ % 3;
-	// Select a Digit
-	GPIO_SetBits(IO_SEVEN_SEGMENT, ALL_DIGITS);
-	GPIO_ResetBits(IO_SEVEN_SEGMENT, INDEX[index_tmp]);
-	
-	// Display a Number
-	GPIO_ResetBits(IO_SEVEN_SEGMENT, ALL_SEGS | SEGMENT_DEC);
-	GPIO_SetBits(IO_SEVEN_SEGMENT, num[index_tmp]);
-
-	wait++;
+	osSignalSet(display_thread, SIGNAL_DISPLAY);
 }
 
 /*!
@@ -219,4 +211,20 @@ int display_guess(int guess) {
 		}
 	}
 	return -1;
+}
+
+void Display(void const *argument) {
+	while(1) {
+		osSignalWait(SIGNAL_DISPLAY, osWaitForever);
+		int index_tmp = count++ % 3;
+		// Select a Digit
+		GPIO_SetBits(IO_SEVEN_SEGMENT, ALL_DIGITS);
+		GPIO_ResetBits(IO_SEVEN_SEGMENT, INDEX[index_tmp]);
+		
+		// Display a Number
+		GPIO_ResetBits(IO_SEVEN_SEGMENT, ALL_SEGS | SEGMENT_DEC);
+		GPIO_SetBits(IO_SEVEN_SEGMENT, num[index_tmp]);
+
+		wait++;
+	}
 }
