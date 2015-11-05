@@ -42,9 +42,11 @@ void Temperature(void const *argument) {
 	while(1) {
 		temp = get_temperature();
 		printf("temp: %f\n", temp);
+		//display(temp);
 		osDelay(250);
 	}
 }
+
 void Accelerometer(void const *argument){
 	//osDelay(3000);
 	float angle;
@@ -54,6 +56,7 @@ void Accelerometer(void const *argument){
 		update();
 		get_angle(&angle);
 		printf("angle: %f\n", angle);
+		display(angle);
 		osDelay(250);
 	}
 }
@@ -74,7 +77,7 @@ osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
 	Blinky_GPIO_Init();
 	temperature_setup();
 	seven_segment_setup();
-	 
+	
   // create 'thread' functions that start executing,
   // example: tid_name = osThreadCreate (osThread(name), NULL);
 	Blinky_thread = osThreadCreate(osThread(Blinky), NULL);
