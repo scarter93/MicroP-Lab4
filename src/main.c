@@ -7,14 +7,18 @@
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
 #include <stdio.h>
-#include "accelerometer.h"
 
+#include "accelerometer.h"
+#include "keypad.h"
 #include "temperature.h"
 
 // ID for thread
-osThreadId	Blinky_thread;
+osThreadId blinky_thread;
 osThreadId temperature_thread;
 osThreadId accelerometer_thread;
+osThreadId keypad_thread;
+
+TO_DISPLAY to_display;
 
 void Blinky_GPIO_Init(void){
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -41,7 +45,7 @@ void Temperature(void const *argument) {
 	float temp;
 	while(1) {
 		temp = get_temperature();
-		printf("temp: %f\n", temp);
+		//printf("temp: %f\n", temp);
 		osDelay(250);
 	}
 }
@@ -50,14 +54,16 @@ void Accelerometer(void const *argument){
 	//osDelay(3000);
 	while (1){
 		get_angle(&a);
-		printf("angle: %f\n", a);
+		//printf("angle: %f\n", a);
 		osDelay(250);
 	}
 }
 
+
 osThreadDef(Blinky, osPriorityNormal, 1, 0);
 osThreadDef(Temperature, osPriorityNormal, 1, 0);
 osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
+osThreadDef(Keypad, osPriorityNormal, 1, 0);
 
 /*
  * main: initialize and start the system
@@ -68,14 +74,17 @@ osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
 	// ID for thread
   // initialize peripherals here
 	accelerometer_setup(ACCELEROMETER_LIS3DSH);
+	keypad_setup();
 	Blinky_GPIO_Init();
 	temperature_setup();
 	
   // create 'thread' functions that start executing,
   // example: tid_name = osThreadCreate (osThread(name), NULL);
-	Blinky_thread = osThreadCreate(osThread(Blinky), NULL);
+	blinky_thread = osThreadCreate(osThread(Blinky), NULL);
 	temperature_thread = osThreadCreate(osThread(Temperature), NULL);
 	accelerometer_thread = osThreadCreate(osThread(Accelerometer), NULL);
+	keypad_thread = osThreadCreate(osThread(Keypad), NULL);
+	
 	osKernelStart ();                         // start thread execution 
 }
 

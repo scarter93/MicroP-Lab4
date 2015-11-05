@@ -20,6 +20,18 @@
 #include <cmsis_os.h>              // CMSIS RTOS header file
 
 
+typedef enum SIGNALS{
+	KEYPAD = 0x01,
+	TEMP_ACCEL = 0x02
+}SIGNALS;
+
+typedef enum TO_DISPLAY{
+	TEMP,
+	ACCEL
+}TO_DISPLAY;
+
+extern TO_DISPLAY to_display;
+
 // global 'thread' functions ---------------------------------------------------
 /* 
 Example:
@@ -28,7 +40,10 @@ extern void sample_name (void const *argument);          // thread function
 osThreadId tid_sample_name;                              // thread id
 osThreadDef (sample_name, osPriorityNormal, 1, 0);       // thread object
 */
-
+extern osThreadId blinky_thread;
+extern osThreadId temperature_thread;
+extern osThreadId accelerometer_thread;
+extern osThreadId keypad_thread;
 
 // global 'semaphores' ----------------------------------------------------------
 /* 
