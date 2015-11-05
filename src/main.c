@@ -14,31 +14,9 @@
 
 #define OVERHEATING 35
 
-osThreadId Blinky_thread;
 osThreadId temperature_thread;
 osThreadId accelerometer_thread;
 osThreadId display_thread;
-
-void Blinky_GPIO_Init(void){
-	GPIO_InitTypeDef GPIO_InitStructure;
-	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13| GPIO_Pin_14| GPIO_Pin_15;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-	
-}
-
-void Blinky(void const *argument){
-	while(1){
-		GPIO_ToggleBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);
-		osDelay(250);
-	}
-}
 
 void Temperature(void const *argument) {
 	float temp;
@@ -70,7 +48,6 @@ void Accelerometer(void const *argument){
 	}
 }
 
-osThreadDef(Blinky, osPriorityNormal, 1, 0);
 osThreadDef(Temperature, osPriorityNormal, 1, 0);
 osThreadDef(Accelerometer, osPriorityNormal, 1, 0);
 osThreadDef(Display, osPriorityNormal, 1, 0);
@@ -84,16 +61,15 @@ osThreadDef(Display, osPriorityNormal, 1, 0);
 	// ID for thread
   // initialize peripherals here
 	accelerometer_setup(ACCELEROMETER_LIS3DSH);
-	Blinky_GPIO_Init();
 	temperature_setup();
 	seven_segment_setup();
 	
   // create 'thread' functions that start executing,
   // example: tid_name = osThreadCreate (osThread(name), NULL);
-	Blinky_thread = osThreadCreate(osThread(Blinky), NULL);
 	temperature_thread = osThreadCreate(osThread(Temperature), NULL);
 	accelerometer_thread = osThreadCreate(osThread(Accelerometer), NULL);
 	display_thread = osThreadCreate(osThread(Display), NULL);
+	 
 	osKernelStart ();                         // start thread execution 
 }
 

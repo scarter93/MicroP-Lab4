@@ -32,7 +32,6 @@ osThreadId tid_sample_name;                              // thread id
 osThreadDef (sample_name, osPriorityNormal, 1, 0);       // thread object
 */
 
-extern osThreadId Blinky_thread;
 extern osThreadId temperature_thread;
 extern osThreadId accelerometer_thread;
 extern osThreadId display_thread;
