@@ -12,9 +12,8 @@ extern int keypadready;
  */
 int keypad_setup(void);
 
-
+//thread function
 void Keypad(void const *argument);
-
 
 /*!
 	Get's a guess from user

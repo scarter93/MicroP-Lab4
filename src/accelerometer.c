@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "moving_average.h"
-
+#include "seven_segment_display.h"
 
 FilterBuffer angle_avg;
 
@@ -77,7 +77,7 @@ int accelerometer_setup(ACCELEROMETER which) {
 	return 0;
 }
 
-float xyz[3];
+float xyz[3]; //! contains x, y, and z accelerations
 
 #define OFFSET_X 0
 #define OFFSET_Y -13.5f
@@ -91,7 +91,9 @@ void EXTI0_IRQHandler(void)
 		EXTI_ClearITPendingBit(LIS3DSH_SPI_INT1_EXTI_LINE);
 	}
 }
-
+/*!
+	Updates the angle calculated from the accelerometer
+ */
 void update() {
 	// get offset values
 	float x = xyz[0] + OFFSET_X;
@@ -110,3 +112,25 @@ int get_angle(float* angle) {
 	*angle = get_value(&angle_avg);
 	return 0;
 }
+
+/*!
+	Acceleromter Thread
+	Polls accelerometer when data is available
+ */
+void Accelerometer(void const *argument){
+	//osDelay(3000);
+	float angle;
+	while (1){
+		//wait untill ready
+		osSignalWait(SIGNAL_ACCELEROMETER, osWaitForever);
+		update();
+		get_angle(&angle);
+		printf("angle: %f\n", angle);
+		//display if designated
+		if (to_display == ACCEL) {
+			display(angle);
+		}
+		osDelay(250);
+	}
+}
+

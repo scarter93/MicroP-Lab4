@@ -6,12 +6,16 @@
 #include "stm32f4xx.h"
 #include <stdint.h>
 
+#include "osObjects.h"
 #include "moving_average.h"
+#include "seven_segment_display.h"
 
 const float to_mV = 1000.0f;
 const float mV_25 = 760.0f;
 const float slope = 2.5f;
 const float max = 4095.0f;
+
+#define OVERHEATING 37.0f
 
 int voltage_to_celcius(uint16_t voltage, float* ouput);
 
@@ -52,8 +56,6 @@ int temperature_setup()
 
 float get_temperature()
 {
-	
-	
 	ADC_SoftwareStartConv(ADC1);													//start conversion of temp
 	while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);	//Wait for converion to finish
 
@@ -79,3 +81,26 @@ int voltage_to_celcius(uint16_t voltage, float* output)
 	return 0;
 }
 
+/*!
+	Temperature Thread
+	Updates the temperature intermitantly
+ */
+void Temperature(void const *argument) {
+	float temp;
+	while(1) {
+		temp = get_temperature();
+		printf("temp: %f\n", temp);
+		//check for overheating
+		if (temp > OVERHEATING) {
+			flash_display(1);
+		} else {
+			flash_display(0);
+		}
+		//display if set to display
+		if (to_display == TEMP) {
+			display(temp);
+		}
+		//printf("temp: %f\n", temp);
+		osDelay(250);
+	}
+}

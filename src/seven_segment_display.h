@@ -22,13 +22,14 @@ int display(float to_display);
 
 /*!
 	flash the seven segment display
-	@param 1 starts flashing the display and 0
-					 stops flashin
+	@param toggle 1 starts flashing the 
+		display and 0 stops flashing
  */
 void flash_display(int toggle);
 
 /*!
-	Thread which updates the Seven Segment Dispaly
+	Thread which updates the Seven Segment Dispaly.
+	Called on Tim3 Interrupts
  */
 void Display(void const *argument);
 

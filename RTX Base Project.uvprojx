@@ -467,6 +467,16 @@
               <FileType>5</FileType>
               <FilePath>.\src\osObjects.h</FilePath>
             </File>
+            <File>
+              <FileName>keypad.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\keypad.c</FilePath>
+            </File>
+            <File>
+              <FileName>keypad.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\keypad.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

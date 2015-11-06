@@ -8,6 +8,9 @@
  */
 int temperature_setup(void);
 
+//thread function
+void Temperature(void const *argument);
+
 /*!
 	Gets the temparture sensor value
 	@return Temp Value in  Celcius
