@@ -101,6 +101,6 @@ void Temperature(void const *argument) {
 			display(temp);
 		}
 		//printf("temp: %f\n", temp);
-		osDelay(250);
+		osDelay(200);
 	}
 }

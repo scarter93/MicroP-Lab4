@@ -130,7 +130,7 @@ void Accelerometer(void const *argument){
 		if (to_display == ACCEL) {
 			display(angle);
 		}
-		osDelay(250);
+		osDelay(75);
 	}
 }
 
